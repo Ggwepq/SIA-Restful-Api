@@ -26,6 +26,7 @@ class CustomersFilter extends ParamFilter
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
+        'ne' => '!=',
     ];
 }
 
