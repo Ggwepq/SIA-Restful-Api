@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,7 +22,24 @@ class StoreWatchlistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            '*.userId' => 'required|integer',
+            '*.title' => 'required|string',
+            '*.description' => 'string',
+            '*.imageUrl' => 'string',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $data = [];
+
+        foreach ($this->toArray() as $obj) {
+            $obj['user_id'] = $obj['userId'] ?? null;
+            $obj['tmdb_url'] = $obj['imageUrl'] ?? null;
+
+            $data[] = $obj;
+        }
+
+        $this->merge($data);
     }
 }

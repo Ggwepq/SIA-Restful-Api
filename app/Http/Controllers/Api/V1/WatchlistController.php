@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreWatchlistRequest;
-use App\Http\Requests\UpdateWatchlistRequest;
+use App\Http\Requests\V1\StoreWatchlistRequest;
+use App\Http\Requests\V1\UpdateMovieRequest;
+use App\Http\Requests\V1\UpdateWatchlistRequest;
 use App\Http\Resources\V1\WatchlistCollection;
 use App\Http\Resources\V1\WatchlistResource;
 use App\Models\Watchlist;
@@ -21,19 +22,11 @@ class WatchlistController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreWatchlistRequest $request)
     {
-        //
+        return new WatchlistResource(Watchlist::create($request->all()));
     }
 
     /**
@@ -45,19 +38,11 @@ class WatchlistController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Watchlist $watchlist)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateWatchlistRequest $request, Watchlist $watchlist)
     {
-        //
+        $watchlist->update($request->all());
     }
 
     /**
