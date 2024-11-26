@@ -14,7 +14,7 @@ class UpdateWatchlistRequest extends FormRequest
     {
         $user = Auth::user();
 
-        return $user != null && $user->tokenCan('update');
+        return $user != null && $user->tokenCan('watchlist:update');
     }
 
     /**

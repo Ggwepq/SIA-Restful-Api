@@ -14,7 +14,7 @@ class StoreMovieRequest extends FormRequest
     {
         $user = Auth::user();
 
-        return $user != null && $user->tokenCan('create');
+        return $user != null && $user->tokenCan('movie:create');
     }
 
     /**
