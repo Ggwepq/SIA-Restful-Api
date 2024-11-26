@@ -21,9 +21,11 @@ class MovieController extends Controller
     public function index()
     {
         try {
-            $movies = Movie::whereHas('watchlists', function ($query) {
-                $query->where('user_id', Auth::id());
-            })->get();
+            $movies = Movie::with('watchlist')
+                ->whereHas('watchlist', function ($query) {
+                    $query->where('user_id', Auth::id());
+                })
+                ->get();
 
             return $this->success(
                 MovieResource::collection($movies),
@@ -32,7 +34,7 @@ class MovieController extends Controller
         } catch (\Exception $e) {
             return $this->error(
                 $e->getMessage(),
-                "Failed to user's movies.",
+                "Failed to retrieve user's movies.",
                 500
             );
         }
@@ -67,7 +69,7 @@ class MovieController extends Controller
     public function show(Movie $movie)
     {
         try {
-            if ($movie->watchlists->user_id !== Auth::id()) {
+            if ($movie->watchlist->user_id !== Auth::id()) {
                 return $this->error(
                     null,
                     'Unauthorized access to movie.',
@@ -75,13 +77,15 @@ class MovieController extends Controller
                 );
             }
 
+            $movie->load('watchlist');
+
             return $this->success(
                 new MovieResource($movie),
                 'Movie retrieved successfully.'
             );
         } catch (\Exception $e) {
             return $this->error(
-                null,
+                $e->getMessage(),
                 'Failed to retrieve movie.',
                 500
             );
@@ -94,7 +98,7 @@ class MovieController extends Controller
     public function destroy(Movie $movie)
     {
         try {
-            if ($movie->watchlists->user_id !== Auth::id()) {
+            if ($movie->watchlist->user_id !== Auth::id()) {
                 return $this->error(
                     null,
                     'Unauthorized access to delete movie.',

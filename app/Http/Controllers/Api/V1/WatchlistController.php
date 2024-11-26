@@ -22,7 +22,7 @@ class WatchlistController extends Controller
     public function index()
     {
         try {
-            $watchlist = Watchlist::where('user_id', Auth::id())->with('movies')->get();
+            $watchlist = Watchlist::where('user_id', Auth::id())->with('movies')->paginate();
 
             return $this->success(
                 WatchlistResource::collection($watchlist),
@@ -72,8 +72,8 @@ class WatchlistController extends Controller
             }
 
             return $this->success(
-                new WatchlistResource($watchlist),
-                'Watchlist retrieved successfully.'
+                new WatchlistResource($watchlist->load('movies')),
+                'Watchlist retrieved successfully.',
             );
         } catch (\Exception $e) {
             return $this->error('Failed to retrieve watchlist.', $e->getMessage(), 500);

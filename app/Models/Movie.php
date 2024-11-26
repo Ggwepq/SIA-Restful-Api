@@ -14,7 +14,7 @@ class Movie extends Model
         'tmdb_id',
     ];
 
-    public function watchlists()
+    public function watchlist()
     {
         return $this->belongsTo(Watchlist::class);
     }
