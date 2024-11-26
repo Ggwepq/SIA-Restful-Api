@@ -8,16 +8,30 @@ use App\Http\Requests\V1\UpdateWatchlistRequest;
 use App\Http\Resources\V1\WatchlistCollection;
 use App\Http\Resources\V1\WatchlistResource;
 use App\Models\Watchlist;
+use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class WatchlistController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $watchlist = Watchlist::with('movies');
-        return new WatchlistCollection($watchlist->paginate());
+        try {
+            $watchlist = Watchlist::where('user_id', Auth::id())->with('movies')->get();
+
+            return $this->success(
+                WatchlistResource::collection($watchlist),
+                'User watchlists retrieved successfully.',
+                200
+            );
+        } catch (Exception $e) {
+            return $this->error('Failed to retrieve user watchlists.', $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -25,9 +39,22 @@ class WatchlistController extends Controller
      */
     public function store(StoreWatchlistRequest $request)
     {
-        dd($request->validated());
-        $watchlist = Watchlist::create($request->validated());
-        return new WatchlistResource($watchlist);
+        try {
+            $watchlist = Watchlist::create([
+                'user_id' => Auth::id(),
+                'title' => $request->title,
+                'description' => $request->description,
+                'image' => $request->image,
+            ]);
+
+            return $this->success(
+                new WatchlistResource($watchlist),
+                'Watchlist created successfully.',
+                201
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to create watchlist.', $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -35,7 +62,22 @@ class WatchlistController extends Controller
      */
     public function show(Watchlist $watchlist)
     {
-        return new WatchlistResource($watchlist->load('movies'));
+        try {
+            if ($watchlist->user_id !== Auth::id()) {
+                return $this->error(
+                    'You are not authorized to view this watchlist.',
+                    null,
+                    403
+                );
+            }
+
+            return $this->success(
+                new WatchlistResource($watchlist),
+                'Watchlist retrieved successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to retrieve watchlist.', $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -43,7 +85,24 @@ class WatchlistController extends Controller
      */
     public function update(UpdateWatchlistRequest $request, Watchlist $watchlist)
     {
-        $watchlist->update($request->all());
+        if ($watchlist->user_id !== Auth::id()) {
+            return $this->error(
+                null,
+                'This action is unauthorized. You do not own this watchlist.',
+                403
+            );
+        }
+
+        try {
+            $watchlist->update($request->validated());
+
+            return $this->success(
+                new WatchlistResource($watchlist),
+                'Watchlist updated successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to update watchlist.', $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -51,7 +110,23 @@ class WatchlistController extends Controller
      */
     public function destroy(Watchlist $watchlist)
     {
-        $watchlist->delete();
-        return response()->json(['message' => 'Watchlist deleted successfully.']);
+        if ($watchlist->user_id !== Auth::id()) {
+            return $this->error(
+                null,
+                'This action is unauthorized. You do not own this watchlist.',
+                403
+            );
+        }
+
+        try {
+            $watchlist->delete();
+
+            return $this->success(
+                null,
+                'Watchlist deleted successfully.'
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to delete watchlist.', $e->getMessage(), 500);
+        }
     }
 }

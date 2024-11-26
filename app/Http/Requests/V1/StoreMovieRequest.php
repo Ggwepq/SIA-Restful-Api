@@ -3,6 +3,7 @@
 namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreMovieRequest extends FormRequest
 {
@@ -11,7 +12,9 @@ class StoreMovieRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = Auth::user();
+
+        return $user != null && $user->tokenCan('create');
     }
 
     /**
@@ -22,9 +25,9 @@ class StoreMovieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'watchlist_id' => 'required|exists:watchlists,id',
-            'tmdb_id' => 'required|integer',
-            'added_at' => 'nullable|date',
+            '*.watchlist_id' => 'required|exists:watchlists,id',
+            '*.tmdb_id' => 'required|integer',
+            '*.added_at' => 'nullable|date',
         ];
     }
 }

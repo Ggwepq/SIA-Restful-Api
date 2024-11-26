@@ -9,7 +9,12 @@ class Movie extends Model
 {
     use HasFactory;
 
-    public function watchlist()
+    protected $fillable = [
+        'watchlist_id',
+        'tmdb_id',
+    ];
+
+    public function watchlists()
     {
         return $this->belongsTo(Watchlist::class);
     }

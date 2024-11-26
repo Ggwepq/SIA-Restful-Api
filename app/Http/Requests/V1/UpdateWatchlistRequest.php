@@ -3,6 +3,7 @@
 namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateWatchlistRequest extends FormRequest
 {
@@ -11,7 +12,9 @@ class UpdateWatchlistRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = Auth::user();
+
+        return $user != null && $user->tokenCan('update');
     }
 
     /**
@@ -21,29 +24,10 @@ class UpdateWatchlistRequest extends FormRequest
      */
     public function rules(): array
     {
-        $method = $this->method();
-
-        if ($method == 'PUT') {
-            return [
-                '*.title' => 'required|string',
-                '*.description' => 'string',
-                '*.imageUrl' => 'string',
-            ];
-        } else {
-            return [
-                '*.title' => 'sometimes|required|string',
-                '*.description' => 'sometimes|string',
-                '*.imageUrl' => 'sometimes|string',
-            ];
-        }
-    }
-
-    protected function prepareForValidation()
-    {
-        if ($this->imageUrl) {
-            $this->merge([
-                'image_url' => $this->imageUrl,
-            ]);
-        }
+        return [
+            'title' => 'sometimes|required|string',
+            'description' => 'sometimes|nullable|string',
+            'image_url' => 'sometimes|nullable|url',
+        ];
     }
 }

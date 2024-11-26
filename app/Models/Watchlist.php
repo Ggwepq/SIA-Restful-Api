@@ -9,6 +9,13 @@ class Watchlist extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'title',
+        'description',
+        'image_url',
+    ];
+
     public function users()
     {
         return $this->belongsTo(User::class);

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreWatchlistRequest extends FormRequest
 {
@@ -11,7 +12,9 @@ class StoreWatchlistRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = Auth::user();
+
+        return $user != null && $user->tokenCan('create');
     }
 
     /**
@@ -22,7 +25,6 @@ class StoreWatchlistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer',
             'title' => 'required|string',
             'description' => 'nullable|string',
             'image_url' => 'nullable|url',

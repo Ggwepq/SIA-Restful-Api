@@ -19,33 +19,33 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/setup', function () {
-//     $credentials = [
-//         'email' => 'admin@admin.com',
-//         'password' => 'admin',
-//     ];
-//
-//     if (!Auth::attempt($credentials)) {
-//         $user = new \App\Models\User;
-//
-//         $user->name = 'Admin';
-//         $user->email = $credentials['email'];
-//         $user->password = Hash::make($credentials['password']);
-//
-//         $user->save();
-//
-//         if (Auth::attempt($credentials)) {
-//             $user = Auth::user();
-//
-//             $adminToken = $user->createToken('admin-token', ['create', 'update', 'delete']);
-//             $updateToken = $user->createToken('update-token', ['create', 'update']);
-//             $basicToken = $user->createToken('basic-token');
-//
-//             return [
-//                 'adminToken' => $adminToken->plainTextToken,
-//                 'updateToken' => $updateToken->plainTextToken,
-//                 'basicToken' => $basicToken->plainTextToken,
-//             ];
-//         }
-//     }
-// });
+Route::get('/setup', function () {
+    $credentials = [
+        'email' => 'admin@admin.com',
+        'password' => 'admin',
+    ];
+
+    if (!Auth::attempt($credentials)) {
+        $user = new \App\Models\User;
+
+        $user->name = 'Admin';
+        $user->email = $credentials['email'];
+        $user->password = Hash::make($credentials['password']);
+
+        $user->save();
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            $adminToken = $user->createToken('admin-token', ['create', 'update', 'delete']);
+            $updateToken = $user->createToken('update-token', ['create', 'update']);
+            $basicToken = $user->createToken('basic-token');
+
+            return [
+                'adminToken' => $adminToken->plainTextToken,
+                'updateToken' => $updateToken->plainTextToken,
+                'basicToken' => $basicToken->plainTextToken,
+            ];
+        }
+    }
+});
