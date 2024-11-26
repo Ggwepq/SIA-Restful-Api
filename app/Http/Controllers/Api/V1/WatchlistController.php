@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreWatchlistRequest;
 use App\Http\Requests\V1\UpdateWatchlistRequest;
-use App\Http\Resources\V1\WatchlistCollection;
 use App\Http\Resources\V1\WatchlistResource;
 use App\Models\Watchlist;
 use App\Traits\HttpResponses;
@@ -22,7 +21,9 @@ class WatchlistController extends Controller
     public function index()
     {
         try {
-            $watchlist = Watchlist::where('user_id', Auth::id())->with('movies')->paginate();
+            $watchlist = Watchlist::where('user_id', Auth::id())
+                ->with('movies')
+                ->paginate();
 
             return $this->success(
                 WatchlistResource::collection($watchlist),
@@ -63,13 +64,11 @@ class WatchlistController extends Controller
     public function show(Watchlist $watchlist)
     {
         try {
-            if ($watchlist->user_id !== Auth::id()) {
-                return $this->error(
-                    'You are not authorized to view this watchlist.',
-                    null,
-                    403
-                );
-            }
+            $this->checkAuthorized(
+                $watchlist,
+                'Action Unauthorized. Watchlist can not be accessed.',
+                403
+            );
 
             return $this->success(
                 new WatchlistResource($watchlist->load('movies')),
@@ -85,15 +84,14 @@ class WatchlistController extends Controller
      */
     public function update(UpdateWatchlistRequest $request, Watchlist $watchlist)
     {
-        if ($watchlist->user_id !== Auth::id()) {
-            return $this->error(
-                null,
-                'This action is unauthorized. You do not own this watchlist.',
+        try {
+            $this->checkAuthorized(
+                $watchlist,
+                'Action Unauthorized. User has no accessed to the watchlist.',
                 403
             );
-        }
 
-        try {
+            // Update watchlist
             $watchlist->update($request->validated());
 
             return $this->success(
@@ -110,15 +108,14 @@ class WatchlistController extends Controller
      */
     public function destroy(Watchlist $watchlist)
     {
-        if ($watchlist->user_id !== Auth::id()) {
-            return $this->error(
-                null,
-                'This action is unauthorized. You do not own this watchlist.',
+        try {
+            $this->checkAuthorized(
+                $watchlist,
+                'Action Unauthorized. User has no accessed to the watchlist.',
                 403
             );
-        }
 
-        try {
+            // Delete watchlist
             $watchlist->delete();
 
             return $this->success(
@@ -127,6 +124,18 @@ class WatchlistController extends Controller
             );
         } catch (\Exception $e) {
             return $this->error('Failed to delete watchlist.', $e->getMessage(), 500);
+        }
+    }
+
+    public function checkAuthorized(Watchlist $watchlist, string $message, int $status_code = 500)
+    {
+        $message = 'This action is anauthorized.';
+        if ($watchlist->user_id !== Auth::id()) {
+            return $this->error(
+                null,
+                $message,
+                $status_code
+            );
         }
     }
 }

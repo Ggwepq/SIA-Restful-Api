@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\WatchlistController;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,16 +21,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Auth Routes
-Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1\Auth'], function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-});
+Route::prefix('v1')->group(function () {
+    // Auth Routes
+    Route::post('register', [AuthController::class, 'register'])->name('auth-register');
+    Route::post('login', [AuthController::class, 'login'])->name('auth-login');
 
-// Routes guarded by sanctum, need token to access.
-Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1', 'middleware' => 'auth:sanctum'], function () {
-    Route::apiResource('user', User::class);
-    Route::apiResource('watchlists', WatchlistController::class);
-    Route::apiResource('movies', MovieController::class);
+    // Routes guarded by sanctum, need token to access.
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('watchlists', WatchlistController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+        Route::apiResource('movies', MovieController::class)->only('index', 'show', 'store', 'destroy');
+        Route::post('logout', [AuthController::class, 'logout'])->name('auth-logout');
+    });
 });

@@ -4,23 +4,22 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreMovieRequest;
-use App\Http\Resources\V1\MovieCollection;
 use App\Http\Resources\V1\MovieResource;
 use App\Models\Movie;
 use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
 
 class MovieController extends Controller
 {
     use HttpResponses;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the user's movies.
      */
     public function index()
     {
         try {
+            // Get all movies from the user
             $movies = Movie::with('watchlist')
                 ->whereHas('watchlist', function ($query) {
                     $query->where('user_id', Auth::id());
@@ -41,16 +40,15 @@ class MovieController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a movie in storage.
      */
     public function store(StoreMovieRequest $request)
     {
         try {
-            $validated = $request->validated();
-            Movie::insert($validated);
+            $movie = Movie::insert($request->validated());
 
             return $this->success(
-                $validated,
+                new MovieResource($movie),
                 'Movies added successfully.',
                 201
             );
@@ -64,23 +62,19 @@ class MovieController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specific movie.
      */
     public function show(Movie $movie)
     {
         try {
-            if ($movie->watchlist->user_id !== Auth::id()) {
-                return $this->error(
-                    null,
-                    'Unauthorized access to movie.',
-                    403
-                );
-            }
-
-            $movie->load('watchlist');
+            $this->checkAuthorized(
+                $movie,
+                'Action Unauthorized. Movie can not be accessed.',
+                403
+            );
 
             return $this->success(
-                new MovieResource($movie),
+                new MovieResource($movie->load('watchlist')),
                 'Movie retrieved successfully.'
             );
         } catch (\Exception $e) {
@@ -93,18 +87,16 @@ class MovieController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specific movie from storage.
      */
     public function destroy(Movie $movie)
     {
         try {
-            if ($movie->watchlist->user_id !== Auth::id()) {
-                return $this->error(
-                    null,
-                    'Unauthorized access to delete movie.',
-                    403
-                );
-            }
+            $this->checkAuthorized(
+                $movie,
+                'Action Unauthorized. You do not own this watchlist.',
+                403
+            );
 
             $movie->delete();
 
@@ -117,6 +109,21 @@ class MovieController extends Controller
                 $e->getMessage(),
                 'Failed to delete movie.',
                 500
+            );
+        }
+    }
+
+    /**
+     * Check if user is authorized to perform action
+     */
+    public function checkAuthorized(Movie $movie, string $message, int $status_code = 500)
+    {
+        $message = 'This action is anauthorized.';
+        if ($movie->user_id !== Auth::id()) {
+            return $this->error(
+                null,
+                $message,
+                $status_code
             );
         }
     }

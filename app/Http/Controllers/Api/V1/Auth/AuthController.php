@@ -20,12 +20,14 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         try {
+            // Create new user
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
+            // Create new token of user with default abilities
             $token = $user->createToken('API Token of ' . $user->name, ['watchlist:create', 'watchlist:update', 'watchlist:delete', 'movie:create', 'movie:delete'])->plainTextToken;
 
             return $this->success(
@@ -38,7 +40,7 @@ class AuthController extends Controller
             );
         } catch (\Exception $e) {
             return $this->error(
-                null,
+                $e->getMessage(),
                 'Failed to register user.',
                 500
             );
@@ -71,7 +73,7 @@ class AuthController extends Controller
             );
         } catch (\Exception $e) {
             return $this->error(
-                null,
+                $e->getMessage(),
                 'Failed to log in user.',
                 500
             );
@@ -92,7 +94,7 @@ class AuthController extends Controller
             );
         } catch (\Exception $e) {
             return $this->error(
-                null,
+                $e->getMessage(),
                 'Failed to log out user.',
                 500
             );
