@@ -23,8 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1'], function () {
     Route::apiResource('user', User::class);
-    Route::apiResource('watchlist', WatchlistController::class);
+    Route::apiResource('watchlists', WatchlistController::class);
     Route::apiResource('movies', MovieController::class);
 
-    // Route::post('invoices/bulk', [InvoiceController::class, 'bulkStore']);
+    Route::post('movies/add', [MovieController::class, 'insert']);
 });

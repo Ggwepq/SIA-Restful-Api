@@ -22,24 +22,10 @@ class StoreWatchlistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            '*.userId' => 'required|integer',
-            '*.title' => 'required|string',
-            '*.description' => 'string',
-            '*.imageUrl' => 'string',
+            'user_id' => 'required|integer',
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'image_url' => 'nullable|url',
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $data = [];
-
-        foreach ($this->toArray() as $obj) {
-            $obj['user_id'] = $obj['userId'] ?? null;
-            $obj['tmdb_url'] = $obj['imageUrl'] ?? null;
-
-            $data[] = $obj;
-        }
-
-        $this->merge($data);
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\V1\StoreMovieRequest;
 use App\Http\Resources\V1\MovieCollection;
 use App\Http\Resources\V1\MovieResource;
 use App\Models\Movie;
+use Illuminate\Support\Arr;
 
 class MovieController extends Controller
 {
@@ -22,17 +23,14 @@ class MovieController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMovieRequest $request)
-    {
-        return new MovieResource(Movie::create($request->all()));
-    }
+    public function store(StoreMovieRequest $request) {}
 
     /**
      * Display the specified resource.
      */
     public function show(Movie $movie)
     {
-        return new MovieResource($movie->loadMissing('watchlist'));
+        return new MovieResource($movie->load('watchlist'));
     }
 
     /**
@@ -40,6 +38,7 @@ class MovieController extends Controller
      */
     public function destroy(Movie $movie)
     {
-        //
+        $movie->delete();
+        return response()->json(['message' => 'Movie removed successfully.']);
     }
 }

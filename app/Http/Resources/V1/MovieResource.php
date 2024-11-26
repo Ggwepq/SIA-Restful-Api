@@ -16,9 +16,9 @@ class MovieResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'tmdbId' => $this->tmdb_id,
-            'addedAt' => $this->added_at,
             'watchlist' => new WatchlistResource($this->whenLoaded('watchlist')),
+            'tmdb_id' => $this->tmdb_id,
+            'added_at' => $this->added_at,
         ];
     }
 }

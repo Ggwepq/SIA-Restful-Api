@@ -22,30 +22,9 @@ class StoreMovieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            '*.watchlistId' => 'required|integer',
-            '*.tmdbId' => 'required|integer',
+            'watchlist_id' => 'required|exists:watchlists,id',
+            'tmdb_id' => 'required|integer',
+            'added_at' => 'nullable|date',
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $data = [];
-
-        foreach ($this->toArray() as $obj) {
-            // Decode the JSON string into an associative array
-            $decoded = is_string($obj) ? json_decode($obj, true) : $obj;
-
-            // Handle decoding errors
-            if (!is_array($decoded)) {
-                continue;  // Skip invalid entries
-            }
-
-            $obj['watchlist_id'] = $obj['watchlistId'] ?? null;
-            $obj['tmdb_id'] = $obj['tmdbId'] ?? null;
-
-            $data[] = $obj;
-        }
-
-        $this->merge($data);
     }
 }

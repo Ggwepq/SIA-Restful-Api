@@ -16,11 +16,9 @@ class WatchlistResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'userId' => $this->user_id,
             'title' => $this->title,
             'description' => $this->description,
-            'imageUrl' => $this->image_url,
-            'createdAt' => $this->created_at,
+            'image_url' => $this->image_url,
             'movies' => MovieResource::collection($this->whenLoaded('movies')),
         ];
     }

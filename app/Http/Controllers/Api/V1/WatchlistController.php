@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreWatchlistRequest;
-use App\Http\Requests\V1\UpdateMovieRequest;
 use App\Http\Requests\V1\UpdateWatchlistRequest;
 use App\Http\Resources\V1\WatchlistCollection;
 use App\Http\Resources\V1\WatchlistResource;
@@ -26,7 +25,9 @@ class WatchlistController extends Controller
      */
     public function store(StoreWatchlistRequest $request)
     {
-        return new WatchlistResource(Watchlist::create($request->all()));
+        dd($request->validated());
+        $watchlist = Watchlist::create($request->validated());
+        return new WatchlistResource($watchlist);
     }
 
     /**
@@ -34,7 +35,7 @@ class WatchlistController extends Controller
      */
     public function show(Watchlist $watchlist)
     {
-        return new WatchlistResource($watchlist->loadMissing('movies'));
+        return new WatchlistResource($watchlist->load('movies'));
     }
 
     /**
@@ -50,6 +51,7 @@ class WatchlistController extends Controller
      */
     public function destroy(Watchlist $watchlist)
     {
-        //
+        $watchlist->delete();
+        return response()->json(['message' => 'Watchlist deleted successfully.']);
     }
 }
