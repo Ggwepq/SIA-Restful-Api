@@ -45,10 +45,11 @@ class MovieController extends Controller
     public function store(StoreMovieRequest $request)
     {
         try {
-            $movie = Movie::insert($request->validated());
+            $validated = $request->validated();
+            Movie::insert($validated);
 
             return $this->success(
-                new MovieResource($movie),
+                $validated,
                 'Movies added successfully.',
                 201
             );
