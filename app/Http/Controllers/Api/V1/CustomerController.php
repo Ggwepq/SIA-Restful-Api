@@ -23,8 +23,6 @@ class CustomerController extends Controller
 
         $includeInvoice = $request->exists('includeInvoices');
 
-        // dd($includeInvoice);
-
         $customers = Customer::where($filterItems);
 
         if ($includeInvoice) {
@@ -57,26 +55,10 @@ class CustomerController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
         $customer->update($request->all());
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
-    {
-        //
     }
 }
