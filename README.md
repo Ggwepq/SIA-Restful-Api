@@ -32,14 +32,15 @@
 
 ### Query Parameters
 
-| PARAM   | VALUE     | DESCRIPTION                             | SAMPLE                           |
-| ------- | --------- | --------------------------------------- | -------------------------------- |
-| `[eq]`  | <b>=</b>  | Find equal to the value                 | `invoices?type[eq]=V`            |
-| `[lt]`  | <b><</b>  | Find less than to the value             | `customers?postalCode[lt]=5000`  |
-| `[lte]` | <b><=</b> | Find less than or equal to the value    | `customers?postalCode[lte]=5000` |
-| `[gt]`  | <b>></b>  | Find greater than to the value          | `invoices?amount[gt]=1000`       |
-| `[gte]` | <b>>=</b> | Find greater than or equal to the value | `invoices?amount[gte]=1000`      |
-| `[ne]`  | <b>!=</b> | Find not equal to the value             | `invoices?type[ne]=V`            |
+| PARAM             | VALUE     | DESCRIPTION                              | SAMPLE                           |
+| ----------------- | --------- | ---------------------------------------- | -------------------------------- |
+| `[eq]`            | <b>=</b>  | Find equal to the value                  | `invoices?type[eq]=V`            |
+| `[lt]`            | <b><</b>  | Find less than to the value              | `customers?postalCode[lt]=5000`  |
+| `[lte]`           | <b><=</b> | Find less than or equal to the value     | `customers?postalCode[lte]=5000` |
+| `[gt]`            | <b>></b>  | Find greater than to the value           | `invoices?amount[gt]=1000`       |
+| `[gte]`           | <b>>=</b> | Find greater than or equal to the value  | `invoices?amount[gte]=1000`      |
+| `[ne]`            | <b>!=</b> | Find not equal to the value              | `invoices?type[ne]=V`            |
+| `includeInvoices` | NULL      | Show customers along with their invoices | `customer?includeInvoices`       |
 
 > [!NOTE]
 > Query parameters only work on get requests for customers and invoices
@@ -86,7 +87,7 @@ http://localhost:8000/api/v1/register
 }
 ```
 
-### `GET` Logout user
+### `POST` Logout user
 
 #### Endpoint
 
@@ -586,8 +587,4 @@ http://localhost:8000/api/v1/invoices/bulk
 
 #### Response Sample
 
-```json
-{
-    None
-}
-```
+`No response aside from status`
