@@ -1,31 +1,37 @@
 ## ⚡ API Endpoints
 
 ### Watchlists
-METHOD       | ENDPOINT                      | DESCRIPTION
--------------| -------------                 | -------------------
-`GET`        | <b>api/v1/watchlists</b>      | List all user's watchlists
-`POST`       | <b>api/v1/watchlists</b>      | Create new watchlist for user
-`GET`        | <b>api/v1/watchlists/{id}</b> | Show a specific watchlist
-`PUT`        | <b>api/v1/watchlists/{id}</b> | Update a watchlist
-`DELETE`     | <b>api/v1/watchlists/{id}</b> | Delete a watchlist
+
+| METHOD   | ENDPOINT                      | DESCRIPTION                   |
+| -------- | ----------------------------- | ----------------------------- |
+| `GET`    | <b>api/v1/watchlists</b>      | List all user's watchlists    |
+| `POST`   | <b>api/v1/watchlists</b>      | Create new watchlist for user |
+| `GET`    | <b>api/v1/watchlists/{id}</b> | Show a specific watchlist     |
+| `PUT`    | <b>api/v1/watchlists/{id}</b> | Update a watchlist            |
+| `DELETE` | <b>api/v1/watchlists/{id}</b> | Delete a watchlist            |
 
 ### Movies
-METHOD       | ENDPOINT                      | DESCRIPTION
--------------| -------------                 | -------------------
-`GET`        | <b>api/v1/movies</b>          | List all user's movie from their watchlists
-`POST`       | <b>api/v1/movies</b>          | Add new movie
-`GET`        | <b>api/v1/movies/{id}</b>     | Show a specific movie
-`DELETE`     | <b>api/v1/movies/{id}</b>     | Delete a movie
+
+| METHOD   | ENDPOINT                  | DESCRIPTION                                 |
+| -------- | ------------------------- | ------------------------------------------- |
+| `GET`    | <b>api/v1/movies</b>      | List all user's movie from their watchlists |
+| `POST`   | <b>api/v1/movies</b>      | Add new movie                               |
+| `GET`    | <b>api/v1/movies/{id}</b> | Show a specific movie                       |
+| `DELETE` | <b>api/v1/movies/{id}</b> | Delete a movie                              |
 
 ### User
-METHOD       | ENDPOINT                      | DESCRIPTION
--------------| -------------                 | -------------------
-`GET`        | <b>api/users</b>              | Show current user
-`POST`       | <b>api/v1/login</b>           | Create a new token for registered user
-`POST`       | <b>api/v1/register</b>        | Create new user with access token
-`GET`        | <b>api/v1/logout</b>          | Remove user's token
 
-##  <span id="usage"> ⚡ API Usage</span>
+| METHOD | ENDPOINT               | DESCRIPTION                            |
+| ------ | ---------------------- | -------------------------------------- |
+| `GET`  | <b>api/users</b>       | Show current user                      |
+| `POST` | <b>api/v1/login</b>    | Create a new token for registered user |
+| `POST` | <b>api/v1/register</b> | Create new user with access token      |
+| `GET`  | <b>api/v1/logout</b>   | Remove user's token                    |
+
+> [!NOTE]
+> Watchlist and movie endpoints need bearer token to access
+
+## <span id="usage"> ⚡ API Usage</span>
 
 ### `GET` User's Watchlists
 
@@ -34,6 +40,7 @@ METHOD       | ENDPOINT                      | DESCRIPTION
 ```url
 http://localhost:{port_number}/api/v1/watchlists
 ```
+
 #### Response Schema
 
 ```json
@@ -59,9 +66,8 @@ http://localhost:{port_number}/api/v1/watchlists
   ]
 ```
 
-
-
 ## API Made with
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
